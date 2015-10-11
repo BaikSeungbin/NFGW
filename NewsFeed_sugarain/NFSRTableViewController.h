@@ -47,6 +47,7 @@
 @property (strong, nonatomic) NFSRDetailViewController *detailViewController;
 @property (strong, nonatomic) NFSRLoginViewController *loginviewcontroller;
 @property (retain, nonatomic) IBOutlet UIButton *logOut;
+@property (retain, nonatomic) IBOutlet UIButton *refresh;
 
 
 @end

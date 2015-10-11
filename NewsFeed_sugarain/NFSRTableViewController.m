@@ -245,6 +245,11 @@ int rowNo;
     [self presentViewController:loginView animated:YES completion:nil];
 }
 
+- (IBAction)sigininClicked_refresh:(id)sender {
+    [self resetData];
+}
+
+
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the specified item to be editable.
@@ -323,6 +328,7 @@ int rowNo;
 
 - (void)dealloc {
     [_logOut release];
+    [_refresh release];
     [super dealloc];
 }
 @end
