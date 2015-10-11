@@ -7,11 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "NFSRLoginViewController.h"
+#import "SRManagerKit.h"
+
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-
+@property (strong, nonatomic) UINavigationController *navigationController;
+@property (strong, nonatomic) NFSRLoginViewController *loginviewcontroller;
 
 @end
+
+
 

@@ -1,0 +1,22 @@
+//
+//  sugarain-PrefixHeader.pch
+//  sugarain
+//
+//  Created by SonMintak on 4/25/15.
+//  Copyright (c) 2015 Mintak Son. All rights reserved.
+//
+
+#ifndef sugarain_sugarain_PrefixHeader_pch
+#define sugarain_sugarain_PrefixHeader_pch
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#import <UIKit/UIKit.h>
+#import <CoreGraphics/CoreGraphics.h>
+
+#import "SRManagerKit.h"
+
+
+
+#endif

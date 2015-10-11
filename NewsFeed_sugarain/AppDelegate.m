@@ -7,18 +7,98 @@
 //
 
 #import "AppDelegate.h"
+#import "NFSRLoginViewController.h"
+#import "SRManager.h"
+#import "SRManagerKit.h"
 
 @interface AppDelegate ()
 
 @end
 
 @implementation AppDelegate
+@synthesize navigationController = _navigationController;
 
-
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions{
+      [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
+    
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    
+    // APNS
+    application.applicationIconBadgeNumber = 0;
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
+    {
+        UIUserNotificationSettings *notiType = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert |
+                                                UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:nil];
+        
+        [[UIApplication sharedApplication] registerUserNotificationSettings:notiType];
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    }
+    else
+    {
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
+         (UIUserNotificationTypeBadge | UIUserNotificationTypeSound | UIUserNotificationTypeAlert)];
+    }
+    
+    if(launchOptions!=nil){
+        NSString *msg = [NSString stringWithFormat:@"%@", launchOptions];
+        NSLog(@" %@",msg);
+        
+    }
     return YES;
+    
+    
 }
+
+- (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken{
+    NSLog(@"deviceToken: %@", deviceToken);
+    NSString *stringToken = [[deviceToken description] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
+    stringToken = [stringToken stringByReplacingOccurrencesOfString:@" " withString:@""];
+    
+    [[SRXMLRPCManager sharedManager] requestInitializeWithDeviceId:[SRSettingsManager sharedManager].device_id
+                                                             token:stringToken
+                                                        deviceType:@"I"
+                                                             alarm:@"Y"
+                                                          isForced:NO
+                                                    successHandler:^(id XMLData) {
+                                                        [[SRSettingsManager sharedManager] getInfoFromServer];
+                                                    } failHandler:^(NSError *error, id XMLData) {
+                                                        
+                                                    }];
+
+}
+
+- (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error{
+    NSLog(@"Failed to register with error : %@", error);
+    static NSString *emptyStringToken = @"empty";
+    [[SRXMLRPCManager sharedManager] requestInitializeWithDeviceId:[SRSettingsManager sharedManager].device_id
+                                                             token:emptyStringToken
+                                                        deviceType:@"I"
+                                                             alarm:@"N"
+                                                          isForced:NO
+                                                    successHandler:^(id XMLData) {
+                                                        [[SRSettingsManager sharedManager] getInfoFromServer];
+                                                    } failHandler:^(NSError *error, id XMLData) {
+                                                        
+                                                    }];
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    NSString *string = [NSString stringWithFormat:@"%@", userInfo];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                    message:string delegate:nil
+                                          cancelButtonTitle:@"OK"   otherButtonTitles:nil];
+    [alert show];
+    
+    
+}
+
+- (void) setApplicationBadgeCount:(NSInteger)badgeCount {
+    if (badgeCount < 0)
+        badgeCount = 0;
+    
+    [UIApplication sharedApplication].applicationIconBadgeNumber = badgeCount;
+}
+
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
