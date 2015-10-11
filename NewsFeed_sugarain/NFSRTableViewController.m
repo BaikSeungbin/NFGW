@@ -45,6 +45,117 @@ int rowNo;
     return self;
 }
 
+- (void)resetData
+{
+    
+    NSURL *url = [NSURL URLWithString:@"http://gw.plani.co.kr/login/accounts/do_login/redirect/eNortjK0UtJXsgZcMAkSAcc.."];
+    
+    ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
+    [request setPostValue:self.loginviewcontroller.txtID forKey:@"userid"];
+    [request setPostValue:self.loginviewcontroller.txtPassword forKey:@"passwd"];
+    
+    [request setDelegate:self];
+    [request startSynchronous];
+    [request setCompletionBlock:^{
+        [request responseString];
+        // 요청한 내용이 성공헀을 경우에 대한 처리
+        [self alertStatus:@"$$로그인 성공하였습니다." :@"Success" :0];
+        
+    }];
+    
+    [request setFailedBlock:^{
+        // 요청한 내용이 실패했을 경우에 대한 처리
+        [self alertStatus:@"$$로그인 실패하였습니다." :@"잘못된 정보" :0];
+    }];
+    
+    
+    NSString *path=@"";
+    NSError *error;
+    NSString *stringFromURL = [[NSString alloc] initWithContentsOfURL:[NSURL URLWithString:@"http://gw.plani.co.kr/feeds"] encoding:NSUTF8StringEncoding error:&error];
+    if(stringFromURL == nil)
+    {
+        NSLog(@"Error reading URL at %@\n%@", path, [error localizedFailureReason]);
+        
+    }
+    /*
+     NSURL *url2 = [NSURL URLWithString:@"http://gw.plani.co.kr/main"];
+     
+     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:url2];
+     
+     NSHTTPURLResponse *response;
+     
+     //요청 수행
+     NSData *data = [NSURLConnection sendSynchronousRequest:req returningResponse:&response error:&error];
+     
+     //헤더를 가져와 표시
+     NSDictionary *headers = [response allHeaderFields];
+     NSLog(@"Headers = %@", headers);
+     //set-cookie 헤더를 추출한 후 이를 나눠 쿠키에 집어 넣는다.
+     NSArray *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:headers forURL:url2];
+     
+     // 이름이 app_id인 쿠키를 검색한다.
+     for(NSHTTPCookie *cookie in cookies){
+     NSLog(@"Cookie: %@", cookie);
+     if([[cookie name] isEqualToString:@"app_id"]){
+     NSLog(@" Found appID");
+     }
+     
+     }*/
+    
+    
+    
+#pragma mark save array list
+    // 배열 초기화
+    arrNewsList=[[NSMutableArray alloc] init];
+    
+    // URL선언.
+    NSString *urlServer=[TARGET_URL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    // html을 가져온다.
+    NSData *htmlData=[[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:urlServer]];
+    
+    // 가져온 html을 Hpple에 전달 & 파싱.
+    TFHpple *xpathParser=[[TFHpple alloc] initWithHTMLData:htmlData];
+    
+    // 파싱은 여기서 이루어짐, NSDictionary형으로된 파싱된 데이터를 NSArray에 저장.
+    NSArray *elements=[xpathParser searchWithXPathQuery:XPATH_QUERY];
+    
+    // NSArray로된 배열에서 파싱된 데이터를 꺼내온다.
+    for(int n=0;n<[elements count];n++)
+    {
+        // 가져온 파싱된 정보들을 NSDictionary에서 Hpple에서 사용가능한 데이터 형으로 바꾼다.
+        TFHppleElement *element=[elements objectAtIndex:n];
+        
+        // 목록을 배열에 저장한다.
+        [arrNewsList addObject:[[element firstChild] content]];
+        
+        
+        // 사용한 변수들을 메모리에서 제거.
+        element=nil;
+        
+        
+        // url링크 주소 담기
+        linkurl=[[NSMutableArray alloc] init];
+        NSString *urlServer=[TARGET_URL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        NSData *htmlData=[[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:urlServer]];
+        TFHpple *xpathParser=[[TFHpple alloc] initWithHTMLData:htmlData];
+        NSArray *elements=[xpathParser searchWithXPathQuery:XPATH_URL];
+        for(int n=0;n<[elements count];n++)
+        {
+            TFHppleElement *element=[elements objectAtIndex:n];
+            [linkurl addObject:[[element firstChild] content]];
+            element=nil;
+        }
+        
+        //변수 전체 제거
+        urlServer=nil;
+        htmlData=nil;
+        xpathParser=nil;
+        elements=nil;
+        
+    }
+
+}
 
 - (void)viewDidLoad
 {
@@ -96,116 +207,9 @@ int rowNo;
     }
     else {
         
-        NSURL *url = [NSURL URLWithString:@"http://gw.plani.co.kr/login/accounts/do_login/redirect/eNortjK0UtJXsgZcMAkSAcc.."];
+        [self resetData];
         
-        ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
-        [request setPostValue:self.loginviewcontroller.txtID forKey:@"userid"];
-        [request setPostValue:self.loginviewcontroller.txtPassword forKey:@"passwd"];
-        
-        [request setDelegate:self];
-        [request startSynchronous];
-        [request setCompletionBlock:^{
-            [request responseString];
-            // 요청한 내용이 성공헀을 경우에 대한 처리
-            [self alertStatus:@"$$로그인 성공하였습니다." :@"Success" :0];
-            
-        }];
-        
-        [request setFailedBlock:^{
-            // 요청한 내용이 실패했을 경우에 대한 처리
-            [self alertStatus:@"$$로그인 실패하였습니다." :@"잘못된 정보" :0];
-        }];
-
-    
-    NSString *path=@"";
-    NSError *error;
-    NSString *stringFromURL = [[NSString alloc] initWithContentsOfURL:[NSURL URLWithString:@"http://gw.plani.co.kr/feeds"] encoding:NSUTF8StringEncoding error:&error];
-    if(stringFromURL == nil)
-    {
-        NSLog(@"Error reading URL at %@\n%@", path, [error localizedFailureReason]);
-        
-    }
-    /*
-    NSURL *url2 = [NSURL URLWithString:@"http://gw.plani.co.kr/main"];
-    
-    NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:url2];
-    
-    NSHTTPURLResponse *response;
-    
-    //요청 수행
-    NSData *data = [NSURLConnection sendSynchronousRequest:req returningResponse:&response error:&error];
-    
-    //헤더를 가져와 표시
-    NSDictionary *headers = [response allHeaderFields];
-    NSLog(@"Headers = %@", headers);    
-    //set-cookie 헤더를 추출한 후 이를 나눠 쿠키에 집어 넣는다.
-    NSArray *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:headers forURL:url2];
-    
-    // 이름이 app_id인 쿠키를 검색한다.
-    for(NSHTTPCookie *cookie in cookies){
-        NSLog(@"Cookie: %@", cookie);
-        if([[cookie name] isEqualToString:@"app_id"]){
-            NSLog(@" Found appID");
-        }
-        
-        }*/
-        
-  
-    
-#pragma mark save array list
-    // 배열 초기화
-    arrNewsList=[[NSMutableArray alloc] init];
-    
-    // URL선언.
-    NSString *urlServer=[TARGET_URL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
-    // html을 가져온다.
-    NSData *htmlData=[[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:urlServer]];
-    
-    // 가져온 html을 Hpple에 전달 & 파싱.
-    TFHpple *xpathParser=[[TFHpple alloc] initWithHTMLData:htmlData];
-    
-    // 파싱은 여기서 이루어짐, NSDictionary형으로된 파싱된 데이터를 NSArray에 저장.
-    NSArray *elements=[xpathParser searchWithXPathQuery:XPATH_QUERY];
-    
-    // NSArray로된 배열에서 파싱된 데이터를 꺼내온다.
-    for(int n=0;n<[elements count];n++)
-    {
-        // 가져온 파싱된 정보들을 NSDictionary에서 Hpple에서 사용가능한 데이터 형으로 바꾼다.
-        TFHppleElement *element=[elements objectAtIndex:n];
-        
-        // 목록을 배열에 저장한다.
-        [arrNewsList addObject:[[element firstChild] content]];
-
-        
-        // 사용한 변수들을 메모리에서 제거.
-        element=nil;
-        
-        
-        // url링크 주소 담기
-        linkurl=[[NSMutableArray alloc] init];
-        NSString *urlServer=[TARGET_URL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        NSData *htmlData=[[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:urlServer]];
-        TFHpple *xpathParser=[[TFHpple alloc] initWithHTMLData:htmlData];
-        NSArray *elements=[xpathParser searchWithXPathQuery:XPATH_URL];
-        for(int n=0;n<[elements count];n++)
-        {
-            TFHppleElement *element=[elements objectAtIndex:n];
-            [linkurl addObject:[[element firstChild] content]];
-            element=nil;
-        }
-       
-        //변수 전체 제거
-        urlServer=nil;
-        htmlData=nil;
-        xpathParser=nil;
-        elements=nil;
-        
-        
-        
-        
-    }
-}
+       }
 }
 
 
