@@ -195,10 +195,10 @@ SHARED_SINGLETON_CLASS(SRSettingsManager);
 }
 
 #pragma mark -
-/*- (void) getInfoFromServer {
+- (void) getInfoFromServer {
   [[SRXMLRPCManager sharedManager] requestGetInfo:self.device_id
                                    successHandler:^(id XMLData) {
-                                     BOOL didChangeSettings =
+                                     /*BOOL didChangeSettings =
                                      ([_token isEqualToString:[XMLData[@"token"] objectWithNullCheck]] == NO) |
                                      ([_alarm isEqualToString:[XMLData[@"alarm"] objectWithNullCheck]] == NO) |
                                      ([_area isEqualToString:[XMLData[@"area"] objectWithNullCheck]] == NO) |
@@ -223,11 +223,11 @@ SHARED_SINGLETON_CLASS(SRSettingsManager);
                                      
                                      if (didChangeSettings == YES) {
                                        [[NSNotificationCenter defaultCenter] postNotificationName:SRSettingsManagerDidChangeNotification object:nil];
-                                     }
+                                     }*/
                                    } failHandler:^(NSError *error, id XMLData) {
                                      
                                    }];
-}*/
+}
 
 - (void) updateInfoToServer {
   [[SRXMLRPCManager sharedManager] requestSetupWithDeviceId:self.device_id

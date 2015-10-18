@@ -27,17 +27,18 @@
 @class NFSRLoginViewController;
 
 #define XPATH_QUERY @"//html//body//div[@class='container']//div//div[@class='main_desk col-md-9 col-lg-10 snap-content']//section//div[@class='gw_feed feeds_page']//ul//li//span//a"
-#define XPATH_URL @"//html//body//div[@class='container']//div//div[@class='main_desk col-md-9 col-lg-10 snap-content']//section//div[@class='gw_feed feeds_page']//ul//li//span//a//@href"
+//#define XPATH_URL @"//html//body//div[@class='container']//div//div[@class='main_desk col-md-9 col-lg-10 snap-content']//section//div[@class='gw_feed feeds_page']//ul//li//span//a//@href"
 //#define XPATH_QUERY2 @"//html//body//div[@class='container']//div//div[@class='main_desk col-md-9 col-lg-10 snap-content']//section//table//tbody//tr/td[@class='ellipsis'//a"
 #define TARGET_URL @"http://gw.plani.co.kr/feeds"
-
 
 
 @interface NFSRTableViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate>
 {
     NSMutableArray *arrNewsList;
     NSString *urlStr;
+    NSString *urlStr2;
     NSMutableArray *linkurl;
+    NSString *urllist;
     NSMutableArray *arrList;
     NFSRLoginViewController *firstView;
     NSUserDefaults *userDefaults;

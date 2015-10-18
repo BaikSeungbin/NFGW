@@ -58,16 +58,13 @@ int rowNo;
     [request startSynchronous];
     [request setCompletionBlock:^{
         [request responseString];
-        // 요청한 내용이 성공헀을 경우에 대한 처리
-        [self alertStatus:@"$$로그인 성공하였습니다." :@"Success" :0];
         
     }];
-    
-    [request setFailedBlock:^{
-        // 요청한 내용이 실패했을 경우에 대한 처리
-        [self alertStatus:@"$$로그인 실패하였습니다." :@"잘못된 정보" :0];
+        [request setFailedBlock:^{
+
     }];
     
+
     
     NSString *path=@"";
     NSError *error;
@@ -77,84 +74,35 @@ int rowNo;
         NSLog(@"Error reading URL at %@\n%@", path, [error localizedFailureReason]);
         
     }
-    /*
-     NSURL *url2 = [NSURL URLWithString:@"http://gw.plani.co.kr/main"];
-     
-     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:url2];
-     
-     NSHTTPURLResponse *response;
-     
-     //요청 수행
-     NSData *data = [NSURLConnection sendSynchronousRequest:req returningResponse:&response error:&error];
-     
-     //헤더를 가져와 표시
-     NSDictionary *headers = [response allHeaderFields];
-     NSLog(@"Headers = %@", headers);
-     //set-cookie 헤더를 추출한 후 이를 나눠 쿠키에 집어 넣는다.
-     NSArray *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:headers forURL:url2];
-     
-     // 이름이 app_id인 쿠키를 검색한다.
-     for(NSHTTPCookie *cookie in cookies){
-     NSLog(@"Cookie: %@", cookie);
-     if([[cookie name] isEqualToString:@"app_id"]){
-     NSLog(@" Found appID");
-     }
-     
-     }*/
-    
-    
-    
-#pragma mark save array list
-    // 배열 초기화
     arrNewsList=[[NSMutableArray alloc] init];
+    linkurl=[[NSMutableArray alloc] init];
     
-    // URL선언.
-    NSString *urlServer=[TARGET_URL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSData *data = [stringFromURL dataUsingEncoding:NSUnicodeStringEncoding];
     
-    // html을 가져온다.
-    NSData *htmlData=[[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:urlServer]];
+    //Create parser
+    TFHpple *xpathParser = [[TFHpple alloc] initWithHTMLData:data];
     
-    // 가져온 html을 Hpple에 전달 & 파싱.
-    TFHpple *xpathParser=[[TFHpple alloc] initWithHTMLData:htmlData];
-    
-    // 파싱은 여기서 이루어짐, NSDictionary형으로된 파싱된 데이터를 NSArray에 저장.
     NSArray *elements=[xpathParser searchWithXPathQuery:XPATH_QUERY];
-    
-    // NSArray로된 배열에서 파싱된 데이터를 꺼내온다.
-    for(int n=0;n<[elements count];n++)
+    for(int i=0;i<[elements count];i++)
     {
-        // 가져온 파싱된 정보들을 NSDictionary에서 Hpple에서 사용가능한 데이터 형으로 바꾼다.
-        TFHppleElement *element=[elements objectAtIndex:n];
+        NSLog(@"%@",[[elements objectAtIndex:i] content]);
+        NSLog(@"%@", [[[elements objectAtIndex:i]attributes]valueForKey:@"href"]);
+
+    TFHppleElement *element=[elements objectAtIndex:i] ;
+    TFHppleElement *urls = [elements objectAtIndex:i];
         
         // 목록을 배열에 저장한다.
         [arrNewsList addObject:[[element firstChild] content]];
-        
-        
-        // 사용한 변수들을 메모리에서 제거.
-        element=nil;
-        
-        
-        // url링크 주소 담기
-        linkurl=[[NSMutableArray alloc] init];
-        NSString *urlServer=[TARGET_URL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        NSData *htmlData=[[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:urlServer]];
-        TFHpple *xpathParser=[[TFHpple alloc] initWithHTMLData:htmlData];
-        NSArray *elements=[xpathParser searchWithXPathQuery:XPATH_URL];
-        for(int n=0;n<[elements count];n++)
-        {
-            TFHppleElement *element=[elements objectAtIndex:n];
-            [linkurl addObject:[[element firstChild] content]];
-            element=nil;
-        }
-        
-        //변수 전체 제거
-        urlServer=nil;
-        htmlData=nil;
-        xpathParser=nil;
-        elements=nil;
-        
-    }
+        [linkurl addObject:[[urls attributes]valueForKey:@"href"]];
+        NSLog(@"%@", arrNewsList);
+        NSLog(@"%@", linkurl);
+    // 사용한 변수들을 메모리에서 제거.
 
+    xpathParser=nil;
+    element=nil;
+    urls =nil;
+
+}
 }
 
 - (void)viewDidLoad
@@ -178,8 +126,7 @@ int rowNo;
                              style:UIAlertActionStyleDefault
                              handler:^(UIAlertAction * action)
                              {
-                                 //[alert dismissViewControllerAnimated:YES completion:nil];
-                                 //[self presentViewController:alert animated:YES completion:nil];
+                                 
                                  
                                  NFSRLoginViewController *loginView =[self.storyboard instantiateViewControllerWithIdentifier:@"NFSRLoginViewController"];
                                  [loginView setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
@@ -191,7 +138,6 @@ int rowNo;
                                  style:UIAlertActionStyleDefault
                                  handler:^(UIAlertAction * action)
                                  {
-                                     //[alert dismissViewControllerAnimated:YES completion:nil];
                                      exit(0);
                                  }];
         
@@ -199,11 +145,7 @@ int rowNo;
         [alert addAction:cancel];
         
         [self presentViewController:alert animated:YES completion:nil];
-/*
-        NFSRLoginViewController *loginView =[self.storyboard instantiateViewControllerWithIdentifier:@"NFSRLoginViewController"];
-        [loginView setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
-        [self presentViewController:loginView animated:YES completion:nil];
-        //[self.view.window.rootViewController presentViewController:loginView animated:YES completion:nil];*/
+
     }
     else {
         
@@ -257,73 +199,37 @@ int rowNo;
 }
 
 
-/*
- // Override to support rearranging the table view.
- - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
- {
- }
- */
-
-/*
- // Override to support conditional rearranging of the table view.
- - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
- {
- // Return NO if you do not want the item to be re-orderable.
- return YES;
- }
- */
-
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     urlStr = [linkurl objectAtIndex:indexPath.row];
-    
     BOOL prefix = [urlStr hasPrefix:@"http//gw.plani.co.kr/"];
     if (!prefix)
     {
-        urlStr=[@"http://gw.plani.co.kr/" stringByAppendingString: urlStr];
+        urlStr2=[@"http://gw.plani.co.kr/" stringByAppendingString: urlStr];
     }
     
-    NSLog(@"%@",urlStr);
-    NSURL *url = [NSURL URLWithString:urlStr];
-    
+
+        
+    NSLog(@"%@",urlStr2);
+    NSURL *url = [NSURL URLWithString:urlStr2];
     NSURLRequest *requestURL = [NSURLRequest requestWithURL:url];
-    /*[self.detailViewController.webView loadRequest:requestURL];
-    
-    NFSRDetailViewController *detailView = [self.storyboard instantiateViewControllerWithIdentifier:@"NFSRDetailViewController"];
-    
-    //NFSRDetailViewController *detailView = [[NFSRDetailViewController alloc] init];
-    if (!self.detailViewController) {
-        [self.storyboard instantiateViewControllerWithIdentifier:@"NFSRDetailViewController"];
-    }
-    [self.navigationController pushViewController:detailView animated:YES];
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    */
+    NSLog(@"%@", requestURL);
     [self.detailViewController.webView loadRequest:requestURL];
     if (!self.detailViewController) {
         self.detailViewController = [[NFSRDetailViewController alloc] initWithNibName:@"DetailViewController" bundle:nil];
     }
-    //[self.view addSubview:detailView.view];
+    
     [self.navigationController pushViewController:self.detailViewController animated:YES];
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+   
+    
 }
 
-/*- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    //return UITableViewCellEditingStyleInsert;
-    return UITableViewCellEditingStyleDelete;
-}
 
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // 여기서 항목 삭제
-}
-
-*/
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (void)dealloc {

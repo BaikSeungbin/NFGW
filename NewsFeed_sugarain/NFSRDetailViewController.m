@@ -14,42 +14,18 @@
 }
 
 
-- (void)configureView;
+
 @end
 
 @implementation NFSRDetailViewController
 
 
-@synthesize detailItem = _detailItem;
-@synthesize detailDescriptionLabel = _detailDescriptionLabel;
 
 
 UIWebView *_webView;
 
 
 
-#pragma mark - Managing the detail item
-
-/*- (void)setDetailItem:(id)newDetailItem
-{
-    if (_detailItem != newDetailItem) {
-        _detailItem = newDetailItem;
-        
-        // Update the view.
-        [self configureView];
-    }
-}
-
-- (void)configureView
-{
-    // Update the user interface for the detail item.
-    
-    if (self.detailItem) {
-        self.detailDescriptionLabel.text = [self.detailItem description];
-    }
-}
-
-*/
 
 
 
@@ -57,12 +33,15 @@ UIWebView *_webView;
 {
     [super viewDidLoad];
     
-    // Do any additional setup after loading the view, typically from a nib.
-   // [self configureView];
-    
     
     // webView
+    if(!_webView)
+    {
+        _webView = [[UIWebView alloc]init];
+    }
+
     _webView.delegate = self;
+    
     
 }
 
@@ -80,24 +59,14 @@ UIWebView *_webView;
     [self setWebView:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
-    self.detailDescriptionLabel = nil;
+
 }
 
-
+#pragma mark block to auotorotate hybrid webview
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
 }
-/*
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        self.title = NSLocalizedString(@"상세보기", @"Detail");
-    }
-    return self;
-}
-*/
 
 
 - (void)dealloc {

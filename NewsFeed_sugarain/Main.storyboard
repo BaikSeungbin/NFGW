@@ -9,8 +9,8 @@
             <objects>
                 <viewController storyboardIdentifier="NFSRLoginViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="O15-fI-TYb" customClass="NFSRLoginViewController" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="Ast-7h-mh8"/>
-                        <viewControllerLayoutGuide type="bottom" id="WU2-7E-baQ"/>
+                        <viewControllerLayoutGuide type="top" id="rpn-fT-H7r"/>
+                        <viewControllerLayoutGuide type="bottom" id="xSQ-wJ-vCd"/>
                     </layoutGuides>
                     <view key="view" autoresizesSubviews="NO" contentMode="scaleToFill" id="z1E-di-0x6">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
