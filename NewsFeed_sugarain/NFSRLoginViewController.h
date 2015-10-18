@@ -21,6 +21,10 @@
 #import "ASIWebPageRequest.h"
 #import "ASIInputStream.h"
 #import "NFSRTableViewController.h"
+#import "SRManagerKit.h"
+#import "SRXMLRPCManager.h"
+
+@class SRXMLRPCManager;
 
 @class NFSRTableViewController;
 
@@ -35,8 +39,6 @@
     NSString *hexToken;
 }
 
-//@property (weak, nonatomic) IBOutlet UITextField *txtID;
-//@property (weak, nonatomic) IBOutlet UITextField *txtPassword;
 
 @property (retain, nonatomic) IBOutlet UITextField *txtID;
 @property (retain, nonatomic) IBOutlet UITextField *txtPassword;
@@ -46,8 +48,8 @@
 
 - (IBAction)sigininClicked_clik:(id)sender;
 - (IBAction)textFieldReturn:(id)sender;
-- (IBAction)backgroundTouched:(id)sender;
 
+@property(strong, nonatomic) SRXMLRPCManager *srxmlrpcmanager;
 @property (strong, nonatomic) NFSRTableViewController *NFSRtableViewController;
 
 

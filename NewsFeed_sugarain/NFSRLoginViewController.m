@@ -14,7 +14,9 @@
 
 @end
 @implementation NFSRLoginViewController
+SHARED_SINGLETON_CLASS(NFSRLoginViewController);
 
+@synthesize srxmlrpcmanager =_srxmlrpcmanager;
 @synthesize NFSRtableViewController = _NFSRTableViewController;
 
 - (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)devToken {
@@ -94,43 +96,28 @@
             
             [newRequest setValue:cookieString forHTTPHeaderField:@"Cookie"];
             
-            //NSLog(@"inserted cookie into request: %@", cookie);
-            
-            if([[cookie name] isEqualToString:@"app_id"]){
-                NSLog(@" Found the app_id");
-        }
             if([[cookie name]  isEqualToString: @"app_id"]){
                 NSString *Login_id = [NSString stringWithFormat: @"%@",[cookie value]];
                 NSLog(@"login ID is %@",Login_id);
                 [prefs setObject:Login_id forKey:@"app_id"];
+                    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                    NSString *deviceToken = [defaults objectForKey:@"deviceToken_id"];
+                    NSLog(@"deviceToken: %@", deviceToken);
+                    
+                    
+                    [[SRXMLRPCManager sharedManager]app_id:[defaults objectForKey:@"app_id"]
+                                requestInitializeWithDeviceId:[SRSettingsManager sharedManager].device_id
+                                                        token:deviceToken
+                                                     isForced:NO
+                                               successHandler:^(id XMLData) {
+                                               } failHandler:^(NSError *error, id XMLData) {
+                                                   
+                                               }];
+
             }
         }
-        /*if([Login_id isEqualToString:nil]) {
-                
-                [self alertStatus:@"입력한 아이디 또는 비밀번호를 확인하세요." :@"잘못된 정보" :0];
-            }
-            else{*/
+               
         
-        NSURL *Posturl = [NSURL URLWithString:@"http://gw.plani.co.kr/app/ios/index"];
-        
-        NSMutableURLRequest *Serverrequest = [NSMutableURLRequest requestWithURL:Posturl];
-        //NSString *data1 = app_id;
-        //NSString *data2 = hexToken;
-        //NSString *data3 = @"ios";
-        [Serverrequest setHTTPMethod:@"UpdateDeviceID"];
-        [Serverrequest setHTTPBody:[app_id dataUsingEncoding:NSUTF8StringEncoding]];
-        [Serverrequest setHTTPBody:[hexToken dataUsingEncoding:NSUTF8StringEncoding]];
-        [Serverrequest setHTTPBody:[@"ios" dataUsingEncoding:NSUTF8StringEncoding]];
-
-        
-        NSURLResponse *resp = nil;
-        NSError *error = nil;
-        
-        // connect server
-        NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:Serverrequest delegate:self];
-        [conn start];
-        [conn release];
-
        
         NFSRTableViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"MainNavigation"];
         [controller setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
@@ -139,32 +126,7 @@
 
 }
 
-/*- (void) uploadAsyncHTTPPost
-{
-    NSURL *url = [NSURL URLWithString:@"http://gw.plani.co.kr/app/ios/index"];
-    
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    NSString *data1 = app_id;
-    NSString *data2 = hexToken;
-    NSString *data3 = @"ios";
-    [request setHTTPMethod:@"UpdateDeviceID"];
-    [request setHTTPBody:[data1 dataUsingEncoding:NSUTF8StringEncoding]];
-    [request setHTTPBody:[data2 dataUsingEncoding:NSUTF8StringEncoding]];
-    [request setHTTPBody:[data3 dataUsingEncoding:NSUTF8StringEncoding]];
-    
-    NSLog (@"%@", data1);
-    NSLog (@"%@", data2);
-    
-    NSURLResponse *resp = nil;
-    NSError *error = nil;
-    
-    // connect server
-    NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self];
-    [conn start];
-    [conn release];
-}
-//}
-*/
+
 
 - (void) alertStatus:(NSString *)msg :(NSString *)title :(int) tag
 {
@@ -184,7 +146,6 @@
     [textField resignFirstResponder];
     return YES;
 }
-
 
 
 - (void)dealloc {

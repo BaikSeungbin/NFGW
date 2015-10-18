@@ -54,32 +54,19 @@
     NSString *stringToken = [[deviceToken description] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
     stringToken = [stringToken stringByReplacingOccurrencesOfString:@" " withString:@""];
     
-    [[SRXMLRPCManager sharedManager] requestInitializeWithDeviceId:[SRSettingsManager sharedManager].device_id
-                                                             token:stringToken
-                                                        deviceType:@"I"
-                                                             alarm:@"Y"
-                                                          isForced:NO
-                                                    successHandler:^(id XMLData) {
-                                                        [[SRSettingsManager sharedManager] getInfoFromServer];
-                                                    } failHandler:^(NSError *error, id XMLData) {
-                                                        
-                                                    }];
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    [prefs setObject:stringToken forKey:@"deviceToken_id"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    
+    NSString *deviceToken_id = stringToken;
+    
+    NSLog(@" deviceToken => %@",deviceToken_id);
 
 }
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error{
-    NSLog(@"Failed to register with error : %@", error);
-    static NSString *emptyStringToken = @"empty";
-    [[SRXMLRPCManager sharedManager] requestInitializeWithDeviceId:[SRSettingsManager sharedManager].device_id
-                                                             token:emptyStringToken
-                                                        deviceType:@"I"
-                                                             alarm:@"N"
-                                                          isForced:NO
-                                                    successHandler:^(id XMLData) {
-                                                        [[SRSettingsManager sharedManager] getInfoFromServer];
-                                                    } failHandler:^(NSError *error, id XMLData) {
-                                                        
-                                                    }];
+   
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {

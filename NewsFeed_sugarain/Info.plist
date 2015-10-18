@@ -64,18 +64,16 @@
 	</array>
 	<key>UserInfo</key>
 	<dict>
+		<key>deviceToken_id</key>
+		<data></data>
 		<key>MySavedCookies</key>
-		<data>
-		</data>
+		<data></data>
 		<key>app_id</key>
-		<data>
-		</data>
+		<data></data>
 		<key>saveID</key>
-		<data>
-		</data>
+		<data></data>
 		<key>savePW</key>
-		<data>
-		</data>
+		<data></data>
 	</dict>
 </dict>
 </plist>

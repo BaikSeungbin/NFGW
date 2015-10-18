@@ -5,7 +5,7 @@
 //  Created by SBHR on 2015. 10. 3..
 //  Copyright © 2015년 seungbin.baik. All rights reserved.
 //
-//된다!!!
+
 #import "NFSRTableViewController.h"
 #import "NFSRDetailViewController.h"
 #import "TFHpple.h"
@@ -14,7 +14,6 @@
 #import "NFSRLoginViewController.h"
 
 @interface NFSRTableViewController () {
-    
     NSMutableArray *_objects;
     NSMutableArray *_contributors;
 }
@@ -114,7 +113,6 @@ int rowNo;
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if ([defaults objectForKey:@"app_id"] == nil) {
-        //Load Login View if no username is found
         NSLog(@"No username found");
         UIAlertController * alert=   [UIAlertController
                                       alertControllerWithTitle:@"로그인 실패"
@@ -126,8 +124,6 @@ int rowNo;
                              style:UIAlertActionStyleDefault
                              handler:^(UIAlertAction * action)
                              {
-                                 
-                                 
                                  NFSRLoginViewController *loginView =[self.storyboard instantiateViewControllerWithIdentifier:@"NFSRLoginViewController"];
                                  [loginView setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
                                  [self presentViewController:loginView animated:YES completion:nil];
@@ -194,7 +190,6 @@ int rowNo;
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Return NO if you do not want the specified item to be editable.
     return YES;
 }
 
@@ -208,7 +203,6 @@ int rowNo;
     {
         urlStr2=[@"http://gw.plani.co.kr/" stringByAppendingString: urlStr];
     }
-    
 
         
     NSLog(@"%@",urlStr2);
